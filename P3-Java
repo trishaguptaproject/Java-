@@ -1,0 +1,221 @@
+//Code-1: Java Program to Demonstrate User-Defined Exceptions in a Bank Account System 
+// Custom exception for insufficient balance
+class InsufficientBalanceException extends Exception {
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
+}
+
+// Custom exception for invalid deposit amount
+class InvalidDepositException extends Exception {
+    public InvalidDepositException(String message) {
+        super(message);
+    }
+}
+
+// BankAccount class
+class BankAccount {
+    private double balance;
+
+    // Constructor
+    public BankAccount(double initialBalance) {
+        if (initialBalance < 0) {
+            balance = 0;
+        } else {
+            balance = initialBalance;
+        }
+    }
+
+    // Method to deposit money
+    public void deposit(double amount) throws InvalidDepositException {
+        if (amount <= 0) {
+            throw new InvalidDepositException("Deposit amount must be greater than zero.");
+        }
+        balance += amount;
+        System.out.println("Successfully deposited: " + amount);
+    }
+
+    // Method to withdraw money
+    public void withdraw(double amount) throws InsufficientBalanceException {
+        if (amount <= 0) {
+            System.out.println("Withdrawal amount must be greater than zero.");
+            return;
+        }
+
+        if (amount > balance) {
+            throw new InsufficientBalanceException("Insufficient balance for withdrawal.");
+        }
+
+        balance -= amount;
+        System.out.println("Successfully withdrawn: " + amount);
+    }
+
+    // Method to display balance
+    public void displayBalance() {
+        System.out.println("Current balance: " + balance);
+    }
+}
+
+// Main class
+public class BankingSystem {
+
+    public static void main(String[] args) {
+
+        BankAccount account = new BankAccount(5000);
+
+        try {
+            account.displayBalance();
+            account.deposit(2000);
+            account.withdraw(8000); // Throws InsufficientBalanceException
+        } catch (InvalidDepositException e) {
+            System.out.println("Deposit Error: " + e.getMessage());
+        } catch (InsufficientBalanceException e) {
+            System.out.println("Withdrawal Error: " + e.getMessage());
+        }
+
+        try {
+            account.deposit(-500); // Throws InvalidDepositException
+        } catch (InvalidDepositException e) {
+            System.out.println("Deposit Error: " + e.getMessage());
+        }
+
+        account.displayBalance();
+    }
+}
+
+//code-2:Java Program to Demonstrate User-Defined (Custom) Exception 
+// Define a custom exception class
+class CustomException extends Exception {
+    public CustomException(String message) {
+        super(message);
+    }
+}
+
+// Create a class that uses the custom exception
+class ExceptionDemo {
+    public void performTask(int value) throws CustomException {
+        if (value < 0) {
+            throw new CustomException("Value cannot be negative");
+        } else if (value > 100) {
+            throw new CustomException("Value cannot exceed 100");
+        } else {
+            System.out.println("Task performed successfully for value: " + value);
+        }
+    }
+}
+
+// Main class
+public class CustomExpectionDemo {
+    public static void main(String[] args) {
+        ExceptionDemo demo = new ExceptionDemo();
+
+        int[] values = {50, -10, 120, 75};
+
+        for (int value : values) {
+            try {
+                demo.performTask(value);
+            } catch (CustomException e) {
+                System.out.println("Custom Exception Caught: " + e.getMessage());
+            }
+        }
+    }
+}
+
+//Code3: Java Program to Demonstrate Flight Booking System Using User-Defined Exception
+// Custom exception for unavailable seats
+class SeatNotAvailableException extends Exception {
+    public SeatNotAvailableException(String message) {
+        super(message);
+    }
+}
+
+// Custom exception for invalid passenger details
+class InvalidPassengerException extends Exception {
+    public InvalidPassengerException(String message) {
+        super(message);
+    }
+}
+
+// Flight class
+class Flight {
+
+    private String flightName;
+    private int availableSeats;
+
+    // Constructor
+    public Flight(String flightName, int availableSeats) {
+        this.flightName = flightName;
+        this.availableSeats = availableSeats;
+    }
+
+    // Method to book ticket
+    public void bookTicket(String passengerName, int seats)
+            throws SeatNotAvailableException, InvalidPassengerException {
+
+        if (passengerName == null || passengerName.isEmpty()) {
+            throw new InvalidPassengerException(
+                    "Passenger name cannot be empty."
+            );
+        }
+
+        if (seats <= 0) {
+            throw new InvalidPassengerException(
+                    "Number of seats must be greater than zero."
+            );
+        }
+
+        if (seats > availableSeats) {
+            throw new SeatNotAvailableException(
+                    "Requested seats are not available."
+            );
+        }
+
+        availableSeats -= seats;
+
+        System.out.println("Ticket booked successfully for: " + passengerName);
+        System.out.println("Seats booked: " + seats);
+    }
+
+    // Display available seats
+    public void displayFlightDetails() {
+        System.out.println("Flight Name: " + flightName);
+        System.out.println("Available Seats: " + availableSeats);
+    }
+}
+
+// Main class
+public class FlightBookingSystem {
+
+    public static void main(String[] args) {
+
+        Flight flight = new Flight("Air India Express", 50);
+
+        try {
+            flight.displayFlightDetails();
+
+            flight.bookTicket("Rahul", 20);   // Valid booking
+
+            flight.bookTicket("Amit", 40);   // Invalid booking
+                                            // (Seats unavailable)
+
+        } catch (SeatNotAvailableException e) {
+            System.out.println("Booking Error: " + e.getMessage());
+
+        } catch (InvalidPassengerException e) {
+            System.out.println("Passenger Error: " + e.getMessage());
+        }
+
+
+        try {
+            flight.bookTicket("", 5);   // Invalid passenger name
+
+        } catch (SeatNotAvailableException e) {
+            System.out.println("Booking Error: " + e.getMessage());
+
+        } catch (InvalidPassengerException e) {
+            System.out.println("Passenger Error: " + e.getMessage());
+        }
+
+        flight.displayFlightDetails();
+    }
+}
