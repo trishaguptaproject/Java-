@@ -1,0 +1,299 @@
+//Write a program to demonstrate the methods of:
+//a. List interface b. Set interface c. Map interface
+//Demonstrating Java interfaces: List, Set, and Map
+//ListExample
+import java.util.ArrayList;
+import java.util.List;
+
+public class ListExample {
+
+    public static void main(String[] args) {
+
+        System.out.println("----- List Interface -----");
+
+        List<String> animals = new ArrayList<>();
+
+        animals.add("Dog");
+        animals.add("Cat");
+        animals.add("Rabbit");
+        animals.add("Dog"); // Duplicate allowed
+
+        System.out.println("Initial List: " + animals);
+
+        animals.add(1, "Horse");
+        System.out.println("After adding Horse: " + animals);
+
+        System.out.println("First Animal: " + animals.get(0));
+
+        animals.set(2, "Tiger");
+        System.out.println("After updating index 2: " + animals);
+
+        animals.remove("Dog");
+        System.out.println("After removing first Dog: " + animals);
+
+        animals.remove(animals.size() - 1);
+        System.out.println("After removing last element: " + animals);
+
+        System.out.println("Index of Rabbit: " + animals.indexOf("Rabbit"));
+        System.out.println("Contains Cat? " + animals.contains("Cat"));
+        System.out.println("List Size: " + animals.size());
+
+        animals.clear();
+        System.out.println("List after clear(): " + animals);
+    }
+}
+
+//SetExample
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+public class SetExample {
+
+    public static void main(String[] args) {
+
+        System.out.println("----- Set Interface -----");
+
+        Set<String> cities = new HashSet<>();
+
+        cities.add("Mumbai");
+        cities.add("Delhi");
+        cities.add("Pune");
+        cities.add("Mumbai"); // Duplicate ignored
+
+        System.out.println("Initial Set: " + cities);
+
+        cities.remove("Delhi");
+        System.out.println("After removing Delhi: " + cities);
+
+        System.out.println("Contains Pune? " + cities.contains("Pune"));
+        System.out.println("Set Size: " + cities.size());
+        System.out.println("Is Set Empty? " + cities.isEmpty());
+
+        System.out.print("Set Elements: ");
+
+        Iterator<String> itr = cities.iterator();
+
+        while (itr.hasNext()) {
+            System.out.print(itr.next() + " ");
+        }
+
+        System.out.println();
+
+        Set<String> newCities = new HashSet<>();
+        newCities.add("Nagpur");
+        newCities.add("Pune");
+
+        cities.addAll(newCities);
+
+        System.out.println("After addAll(): " + cities);
+    }
+}
+//MapExample
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapExample {
+
+    public static void main(String[] args) {
+
+        System.out.println("----- Map Interface -----");
+
+        Map<String, Integer> marks = new HashMap<>();
+
+        marks.put("Trisha", 89);
+        marks.put("Anchal", 95);
+        marks.put("Preeti", 82);
+        marks.put("Namita", 91);
+
+        System.out.println("Initial Map: " + marks);
+
+        System.out.println("Marks of Anchal: " + marks.get("Anchal"));
+
+        marks.remove("Preeti");
+        System.out.println("After removing Preeti: " + marks);
+
+        System.out.println("Contains Key Trisha? " + marks.containsKey("Trisha"));
+        System.out.println("Contains Value 91? " + marks.containsValue(91));
+
+        System.out.println("Keys: " + marks.keySet());
+        System.out.println("Values: " + marks.values());
+        System.out.println("Entries: " + marks.entrySet());
+
+        System.out.println("Map Size: " + marks.size());
+
+        marks.clear();
+        System.out.println("Map after clear(): " + marks);
+    }
+}
+//The program demonstrates basic usage of List, Set, and Map along with user interaction and common mathematical calculations performed on their elements.
+//List Interface
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class ListDemo {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        List<Double> marksList = new ArrayList<>();
+
+        System.out.println("Enter 5 decimal numbers:");
+
+        for (int i = 1; i <= 5; i++) {
+            System.out.print("Enter number " + i + ": ");
+            marksList.add(sc.nextDouble());
+        }
+
+        System.out.println("\nList Elements: " + marksList);
+
+        double total = 0;
+
+        for (double value : marksList) {
+            total += value;
+        }
+
+        System.out.println("Total = " + total);
+        System.out.println("Average = " + (total / marksList.size()));
+
+        System.out.println("Minimum = " + Collections.min(marksList));
+        System.out.println("Maximum = " + Collections.max(marksList));
+
+        System.out.print("Enter a number to remove: ");
+        double remove = sc.nextDouble();
+
+        if (marksList.remove(remove)) {
+            System.out.println("Updated List: " + marksList);
+        } else {
+            System.out.println("Number not found.");
+        }
+
+        sc.close();
+    }
+}
+//Set Interface
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Scanner;
+
+public class SetDemo {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        Set<Integer> numberSet = new HashSet<>();
+
+        System.out.println("Enter 5 integers:");
+
+        for (int i = 1; i <= 5; i++) {
+            System.out.print("Enter integer " + i + ": ");
+            numberSet.add(sc.nextInt());
+        }
+
+        System.out.println("\nSet Elements: " + numberSet);
+
+        int sum = 0;
+
+        for (int num : numberSet) {
+            sum += num;
+        }
+
+        System.out.println("Sum = " + sum);
+
+        Set<Integer> squareSet = new HashSet<>();
+
+        for (int num : numberSet) {
+            squareSet.add(num * num);
+        }
+
+        System.out.println("Square of Elements: " + squareSet);
+
+        System.out.print("Enter an integer to remove: ");
+        int remove = sc.nextInt();
+
+        if (numberSet.remove(remove)) {
+            System.out.println("Updated Set: " + numberSet);
+        } else {
+            System.out.println("Element not found.");
+        }
+
+        sc.close();
+    }
+}
+
+//Map Interface
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class MapDemo {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        Map<String, Double> studentMarks = new HashMap<>();
+
+        System.out.println("Enter marks of 3 students:");
+
+        for (int i = 1; i <= 3; i++) {
+
+            System.out.print("Student Name " + i + ": ");
+            String name = sc.next();
+
+            System.out.print("Marks of " + name + ": ");
+            double marks = sc.nextDouble();
+
+            studentMarks.put(name, marks);
+        }
+
+        System.out.println("\nStudent Marks: " + studentMarks);
+
+        double total = 0;
+
+        for (double marks : studentMarks.values()) {
+            total += marks;
+        }
+
+        System.out.println("Total Marks = " + total);
+
+        System.out.print("Enter student name to update marks: ");
+        String student = sc.next();
+
+        if (studentMarks.containsKey(student)) {
+
+            System.out.print("Enter new marks: ");
+            double newMarks = sc.nextDouble();
+
+            studentMarks.put(student, newMarks);
+
+            System.out.println("Updated Map: " + studentMarks);
+
+        } else {
+            System.out.println("Student not found.");
+        }
+
+        total = 0;
+
+        for (double marks : studentMarks.values()) {
+            total += marks;
+        }
+
+        System.out.println("New Total Marks = " + total);
+
+        System.out.print("Enter student name to remove: ");
+        String removeStudent = sc.next();
+
+        if (studentMarks.remove(removeStudent) != null) {
+            System.out.println("Updated Map: " + studentMarks);
+        } else {
+            System.out.println("Student not found.");
+        }
+
+        sc.close();
+    }
+}
