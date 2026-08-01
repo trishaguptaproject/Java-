@@ -1,0 +1,260 @@
+//Write a program using various swing components design Java application to accept a student's resume. (Design form)
+package studentresumeform;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class StudentResumeForm extends JFrame implements ActionListener {
+
+    JTextField nameField, emailField, phoneField, dobField;
+    JTextArea addressArea, summaryArea;
+    JRadioButton male, female, other;
+    JComboBox<String> educationBox;
+    JCheckBox java, python, cpp, html;
+    JButton submitButton, clearButton;
+    ButtonGroup genderGroup;
+
+    Color purple = new Color(169, 129, 255);
+    Color lightPurple = new Color(235, 225, 255);
+
+    public StudentResumeForm() {
+
+        setTitle("Student Resume Form");
+        setSize(550, 750);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel mainPanel = new JPanel(new GridLayout(13, 2, 10, 10));
+        mainPanel.setBackground(lightPurple);
+        mainPanel.setBorder(
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        );
+
+        JLabel title = new JLabel("Resume (S086)", JLabel.CENTER);
+        title.setFont(new Font("Arial", Font.BOLD, 28));
+        title.setForeground(Color.WHITE);
+        title.setOpaque(true);
+        title.setBackground(purple);
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setLayout(new BorderLayout());
+        titlePanel.setBackground(purple);
+        titlePanel.setBorder(
+                BorderFactory.createEmptyBorder(12, 10, 12, 10)
+        );
+
+        titlePanel.add(title, BorderLayout.CENTER);
+
+        add(titlePanel, BorderLayout.NORTH);
+        add(mainPanel);
+
+        mainPanel.add(new JLabel("Full Name:"));
+        nameField = new JTextField();
+        mainPanel.add(nameField);
+
+        mainPanel.add(new JLabel("Gender:"));
+
+        JPanel genderPanel = new JPanel(
+                new FlowLayout(FlowLayout.LEFT)
+        );
+
+        genderPanel.setBackground(lightPurple);
+
+        male = new JRadioButton("Male");
+        female = new JRadioButton("Female");
+        other = new JRadioButton("Other");
+
+        male.setBackground(lightPurple);
+        female.setBackground(lightPurple);
+        other.setBackground(lightPurple);
+
+        genderGroup = new ButtonGroup();
+
+        genderGroup.add(male);
+        genderGroup.add(female);
+        genderGroup.add(other);
+
+        genderPanel.add(male);
+        genderPanel.add(female);
+        genderPanel.add(other);
+
+        mainPanel.add(genderPanel);
+
+        mainPanel.add(
+                new JLabel("Date of Birth (dd/mm/yyyy):")
+        );
+
+        dobField = new JTextField();
+        mainPanel.add(dobField);
+
+        mainPanel.add(new JLabel("Email:"));
+        emailField = new JTextField();
+        mainPanel.add(emailField);
+
+        mainPanel.add(new JLabel("Phone Number:"));
+        phoneField = new JTextField();
+        mainPanel.add(phoneField);
+
+        mainPanel.add(new JLabel("Address:"));
+
+        addressArea = new JTextArea(3, 20);
+
+        JScrollPane scroll1 = new JScrollPane(addressArea);
+        mainPanel.add(scroll1);
+
+        mainPanel.add(new JLabel("Education:"));
+
+        String[] degrees = {
+                "Select",
+                "High School",
+                "Diploma",
+                "BSc",
+                "BCA",
+                "B.Com",
+                "BSc CS",
+                "MCA"
+        };
+
+        educationBox = new JComboBox<>(degrees);
+        mainPanel.add(educationBox);
+
+        mainPanel.add(new JLabel("Skills:"));
+
+        JPanel skillPanel = new JPanel(
+                new FlowLayout(FlowLayout.LEFT)
+        );
+
+        skillPanel.setBackground(lightPurple);
+
+        java = new JCheckBox("Java");
+        python = new JCheckBox("Python");
+        cpp = new JCheckBox("C++");
+        html = new JCheckBox("HTML/CSS");
+
+        java.setBackground(lightPurple);
+        python.setBackground(lightPurple);
+        cpp.setBackground(lightPurple);
+        html.setBackground(lightPurple);
+
+        skillPanel.add(java);
+        skillPanel.add(python);
+        skillPanel.add(cpp);
+        skillPanel.add(html);
+
+        mainPanel.add(skillPanel);
+
+        mainPanel.add(new JLabel("Resume Summary:"));
+
+        summaryArea = new JTextArea(4, 20);
+
+        JScrollPane scroll2 = new JScrollPane(summaryArea);
+        mainPanel.add(scroll2);
+
+        submitButton = new JButton("Submit");
+        clearButton = new JButton("Clear");
+
+        submitButton.setBackground(purple);
+        submitButton.setForeground(Color.WHITE);
+        submitButton.setFont(
+                new Font("Arial", Font.BOLD, 14)
+        );
+
+        clearButton.setBackground(
+                new Color(210, 190, 255)
+        );
+
+        clearButton.setForeground(Color.BLACK);
+        clearButton.setFont(
+                new Font("Arial", Font.BOLD, 14)
+        );
+
+        mainPanel.add(submitButton);
+        mainPanel.add(clearButton);
+
+        submitButton.addActionListener(this);
+        clearButton.addActionListener(this);
+
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == submitButton) {
+
+            String name = nameField.getText();
+            String dob = dobField.getText();
+
+            String gender =
+                    male.isSelected() ? "Male" :
+                    female.isSelected() ? "Female" :
+                    other.isSelected() ? "Other" :
+                    "Not Selected";
+
+            String email = emailField.getText();
+            String phone = phoneField.getText();
+            String address = addressArea.getText();
+
+            String education =
+                    (String) educationBox.getSelectedItem();
+
+            String skills = "";
+
+            if (java.isSelected())
+                skills += "Java ";
+
+            if (python.isSelected())
+                skills += "Python ";
+
+            if (cpp.isSelected())
+                skills += "C++ ";
+
+            if (html.isSelected())
+                skills += "HTML/CSS ";
+
+            String summary = summaryArea.getText();
+
+            String message =
+                    "Resume Submitted Successfully!\n\n"
+                    + "Name: " + name + "\n"
+                    + "DOB: " + dob + "\n"
+                    + "Gender: " + gender + "\n"
+                    + "Email: " + email + "\n"
+                    + "Phone: " + phone + "\n"
+                    + "Address: " + address + "\n"
+                    + "Education: " + education + "\n"
+                    + "Skills: " + skills + "\n"
+                    + "Summary: " + summary;
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    message,
+                    "Resume (S086)",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+
+        else if (e.getSource() == clearButton) {
+
+            nameField.setText("");
+            dobField.setText("");
+            emailField.setText("");
+            phoneField.setText("");
+            addressArea.setText("");
+            summaryArea.setText("");
+
+            genderGroup.clearSelection();
+
+            educationBox.setSelectedIndex(0);
+
+            java.setSelected(false);
+            python.setSelected(false);
+            cpp.setSelected(false);
+            html.setSelected(false);
+        }
+    }
+
+    public static void main(String[] args) {
+        new StudentResumeForm();
+    }
+}
