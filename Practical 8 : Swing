@@ -1,0 +1,270 @@
+//Practical 8: A: Construct a simple calculator using Java Swing with minimum functionality. 
+
+package practical8;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Calculator extends JFrame implements ActionListener {
+
+    JTextField num1Field, num2Field, resultField;
+    JButton addButton, subButton, mulButton, divButton, clearButton;
+
+    public Calculator() {
+
+        setTitle("Simple Calculator");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(6, 2, 10, 10));
+
+        JLabel num1Label = new JLabel("Enter Number 1:");
+        JLabel num2Label = new JLabel("Enter Number 2:");
+        JLabel resultLabel = new JLabel("Result:");
+
+        num1Field = new JTextField();
+        num2Field = new JTextField();
+        resultField = new JTextField();
+
+        resultField.setEditable(false);
+
+        addButton = new JButton("+");
+        subButton = new JButton("-");
+        mulButton = new JButton("*");
+        divButton = new JButton("/");
+        clearButton = new JButton("Clear");
+
+        add(num1Label);
+        add(num1Field);
+
+        add(num2Label);
+        add(num2Field);
+
+        add(resultLabel);
+        add(resultField);
+
+        add(addButton);
+        add(subButton);
+
+        add(mulButton);
+        add(divButton);
+
+        add(clearButton);
+
+        addButton.addActionListener(this);
+        subButton.addActionListener(this);
+        mulButton.addActionListener(this);
+        divButton.addActionListener(this);
+        clearButton.addActionListener(this);
+
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        try {
+
+            if (e.getSource() == clearButton) {
+
+                num1Field.setText("");
+                num2Field.setText("");
+                resultField.setText("");
+
+                return;
+            }
+
+            double num1 = Double.parseDouble(num1Field.getText());
+            double num2 = Double.parseDouble(num2Field.getText());
+
+            double result = 0;
+
+            if (e.getSource() == addButton) {
+                result = num1 + num2;
+            }
+            else if (e.getSource() == subButton) {
+                result = num1 - num2;
+            }
+            else if (e.getSource() == mulButton) {
+                result = num1 * num2;
+            }
+            else if (e.getSource() == divButton) {
+
+                if (num2 == 0) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Cannot divide by zero!"
+                    );
+                    return;
+                }
+
+                result = num1 / num2;
+            }
+
+            resultField.setText(String.valueOf(result));
+
+        } catch (NumberFormatException ex) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter valid numbers!"
+            );
+        }
+    }
+
+    public static void main(String[] args) {
+        new Calculator();
+    }
+}
+
+
+//8 B.: Construct a GUI using Java Swing to accept the details of a record of a given table and submit it to the database using JDBC technology of a click button
+package practical8jdbc;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class EmployeeForm extends JFrame implements ActionListener {
+
+    JTextField idField, nameField, ageField, departmentField;
+    JButton submitButton, clearButton;
+
+    public EmployeeForm() {
+
+        setTitle("Employee Registration");
+        setSize(450, 350);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setLayout(new GridLayout(6, 2, 10, 10));
+
+        JLabel idLabel = new JLabel("Employee ID:");
+        JLabel nameLabel = new JLabel("Employee Name:");
+        JLabel ageLabel = new JLabel("Age:");
+        JLabel departmentLabel = new JLabel("Department:");
+
+        idField = new JTextField();
+        nameField = new JTextField();
+        ageField = new JTextField();
+        departmentField = new JTextField();
+
+        submitButton = new JButton("SUBMIT");
+        clearButton = new JButton("CLEAR");
+
+        add(idLabel);
+        add(idField);
+
+        add(nameLabel);
+        add(nameField);
+
+        add(ageLabel);
+        add(ageField);
+
+        add(departmentLabel);
+        add(departmentField);
+
+        add(submitButton);
+        add(clearButton);
+
+        submitButton.addActionListener(this);
+        clearButton.addActionListener(this);
+
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        if (e.getSource() == clearButton) {
+
+            idField.setText("");
+            nameField.setText("");
+            ageField.setText("");
+            departmentField.setText("");
+
+            return;
+        }
+
+        if (e.getSource() == submitButton) {
+
+            String url = "jdbc:mysql://localhost:3307/test_db";
+            String user = "root";
+            String password = "cs";
+
+            String sql = "INSERT INTO employees "
+                    + "(id, name, age, department) "
+                    + "VALUES (?, ?, ?, ?)";
+
+            try {
+
+                Class.forName("com.mysql.jdbc.Driver");
+
+                Connection conn = DriverManager.getConnection(
+                        url,
+                        user,
+                        password
+                );
+
+                PreparedStatement pstmt =
+                        conn.prepareStatement(sql);
+
+                int id = Integer.parseInt(idField.getText());
+                String name = nameField.getText();
+                int age = Integer.parseInt(ageField.getText());
+                String department = departmentField.getText();
+
+                pstmt.setInt(1, id);
+                pstmt.setString(2, name);
+                pstmt.setInt(3, age);
+                pstmt.setString(4, department);
+
+                int rows = pstmt.executeUpdate();
+
+                if (rows > 0) {
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Employee inserted successfully!"
+                    );
+
+                    idField.setText("");
+                    nameField.setText("");
+                    ageField.setText("");
+                    departmentField.setText("");
+                }
+
+                pstmt.close();
+                conn.close();
+
+            } catch (NumberFormatException ex) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "ID and Age must be numbers!"
+                );
+
+            } catch (SQLIntegrityConstraintViolationException ex) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Employee ID already exists!"
+                );
+
+            } catch (Exception ex) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Database Error: " + ex.getMessage()
+                );
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+
+        new EmployeeForm();
+    }
+}
