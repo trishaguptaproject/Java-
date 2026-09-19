@@ -1,0 +1,220 @@
+//index.html
+<!DOCTYPE html> <html> <head> <title>JSP Cookie and Session Demo</title> </head> <body> <center>
+<h1>JSP Cookie and Session Practical</h1>
+
+<h3>Name: Trisha Gupta</h3>
+<h3>Class: SYCS</h3>
+<h3>Subject: JAVA</h3>
+<h3>Roll No: S086</h3>
+
+<hr>
+
+<h2>A. Store User Name in Cookie</h2>
+
+<form action="storeCookie.jsp" method="post">
+    User Name:
+    <input type="text" name="username" required>
+    <input type="submit" value="Store Cookie">
+</form>
+
+<br>
+
+<form action="getCookie.jsp" method="get">
+    <input type="submit" value="Get Cookie">
+</form>
+
+<br>
+
+<h2>B. Display All Cookies</h2>
+
+<form action="displayCookies.jsp" method="get">
+    <input type="submit" value="Display Cookies">
+</form>
+
+<hr>
+
+<h2>C. Store User Name in Session</h2>
+
+<form action="storeSession.jsp" method="post">
+    User Name:
+    <input type="text" name="username" required>
+    <input type="submit" value="Store Session">
+</form>
+
+<br>
+
+<form action="getSession.jsp" method="get">
+    <input type="submit" value="Get Session">
+</form>
+
+</center> </body> </html>
+
+
+//storeCookie.jsp
+<%@ page import="java.net.URLEncoder" %>
+
+<html> <head> <title>Store Cookie</title> </head> <body> <center> <h1>JSP Cookie and Session Practical</h1> <h3>Name: Trisha Gupta</h3> <h3>Class: SYCS</h3> <h3>Subject: JAVA</h3> <h3>Roll No: S086</h3> <hr>
+
+<%
+String username = request.getParameter("username");
+
+Cookie cookie = new Cookie(
+    "username",
+    URLEncoder.encode(username, "UTF-8")
+);
+
+cookie.setMaxAge(60 * 60 * 24);
+
+response.addCookie(cookie);
+
+
+%>
+
+<h2>Cookie Stored Successfully</h2> <p>User Name: <b><%= username %></b></p>
+
+<a href="index.html">Go Back</a>
+
+</center> </body> </html>
+
+//getCookie.jsp
+<%@ page import="java.net.URLDecoder" %>
+
+<html> <head> <title>Get Cookie</title> </head> <body> <center> <h1>JSP Cookie and Session Practical</h1> <h3>Name: Trisha Gupta</h3> <h3>Class: SYCS</h3> <h3>Subject: JAVA</h3> <h3>Roll No: S086</h3> <hr> <h2>Cookie Value</h2>
+
+<%
+Cookie[] cookies = request.getCookies();
+String username = null;
+
+if (cookies != null) {
+    for (Cookie c : cookies) {
+        if (c.getName().equals("username")) {
+            username = URLDecoder.decode(c.getValue(), "UTF-8");
+            break;
+        }
+    }
+}
+
+if (username != null) {
+
+
+%>
+
+<p>User Name stored in cookie: <b><%= username %></b> </p>
+
+<%
+} else {
+%>
+
+<p>No username cookie found.</p>
+
+<%
+}
+%>
+
+<br>
+
+<a href="index.html">Go Back</a>
+
+</center> </body> </html>
+
+//displayCookies.jsp
+<%@ page import="java.net.URLDecoder" %>
+
+<html> <head> <title>Display Cookies</title> </head> <body> <center> <h1>JSP Cookie and Session Practical</h1> <h3>Name: Trisha Gupta</h3> <h3>Class: SYCS</h3> <h3>Subject: JAVA</h3> <h3>Roll No: S086</h3> <hr> <h2>Cookies Stored on Client</h2> <table border="1" cellpadding="10">
+<tr>
+    <th>Cookie Name</th>
+    <th>Cookie Value</th>
+</tr>
+
+
+<%
+Cookie[] cookies = request.getCookies();
+
+if (cookies != null) {
+
+    for (Cookie c : cookies) {
+
+        String name = c.getName();
+        String value = URLDecoder.decode(c.getValue(), "UTF-8");
+
+
+%>
+
+<tr>
+    <td><%= name %></td>
+    <td><%= value %></td>
+</tr>
+
+
+<%
+}
+
+} else {
+
+
+%>
+
+<tr>
+    <td colspan="2">No cookies found</td>
+</tr>
+
+
+<%
+}
+%>
+
+</table> <br>
+
+<a href="index.html">Go Back</a>
+
+</center> </body> </html>
+
+//storeSession.jsp
+<html> <head> <title>Store Session</title> </head> <body> <center> <h1>JSP Cookie and Session Practical</h1> <h3>Name: Trisha Gupta</h3> <h3>Class: SYCS</h3> <h3>Subject: JAVA</h3> <h3>Roll No: S086</h3> <hr>
+
+<%
+String username = request.getParameter("username");
+
+session.setAttribute("username", username);
+
+
+%>
+
+<h2>Session Variable Stored Successfully</h2> <p>User Name: <b><%= username %></b> </p>
+
+<a href="getSession.jsp">Get Session Value</a>
+
+<br><br>
+
+<a href="index.html">Go Back</a>
+
+</center> </body> </html>
+
+//getSession.jsp
+<html> <head> <title>Get Session</title> </head> <body> <center> <h1>JSP Cookie and Session Practical</h1> <h3>Name: Trisha Gupta</h3> <h3>Class: SYCS</h3> <h3>Subject: JAVA</h3> <h3>Roll No: S086</h3> <hr> <h2>Session Value</h2>
+
+<%
+String username = (String) session.getAttribute("username");
+
+if (username != null) {
+
+
+%>
+
+<p>User Name stored in session: <b><%= username %></b> </p>
+
+<%
+} else {
+%>
+
+<p>No username found in session.</p>
+
+<%
+}
+%>
+
+<br>
+
+<a href="index.html">Go Back</a>
+
+</center> </body> </html>
