@@ -1,0 +1,380 @@
+//index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Servlet Practical</title>
+</head>
+
+<body>
+
+    <h1>Employee Management System</h1>
+
+    <h2>Servlet Practical</h2>
+
+    <hr>
+
+    <h3>1. Register Employee</h3>
+
+    <p>
+        Click below to enter employee details
+        and store them in the database.
+    </p>
+
+    <a href="register.html">
+        <button>Register Employee</button>
+    </a>
+
+    <br><br>
+
+    <h3>2. Display All Employees</h3>
+
+    <p>
+        Click below to display all employee
+        records from the database.
+    </p>
+
+    <a href="displayEmployees">
+        <button>Display Employees</button>
+    </a>
+
+</body>
+</html>
+
+//register.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Registration</title>
+</head>
+
+<body>
+
+    <h2>Employee Registration</h2>
+
+    <form action="registerEmployee" method="post">
+
+        <label>Employee ID:</label>
+        <input type="number" name="id" required>
+        <br><br>
+
+        <label>Name:</label>
+        <input type="text" name="name" required>
+        <br><br>
+
+        <label>Age:</label>
+        <input type="number" name="age" required>
+        <br><br>
+
+        <label>Department:</label>
+        <input type="text" name="department" required>
+        <br><br>
+
+        <input type="submit" value="Register Employee">
+
+    </form>
+
+    <br>
+
+    <a href="displayEmployees">
+        Display All Employees
+    </a>
+
+</body>
+</html>
+
+
+//RegisterServlet
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+@WebServlet("/registerEmployee")
+public class RegisterServlet extends HttpServlet {
+
+    private static final String URL =
+            "jdbc:mysql://localhost:3307/test_db";
+
+    private static final String USER =
+            "root";
+
+    private static final String PASSWORD =
+            "cs";
+
+    @Override
+    protected void doPost(HttpServletRequest request,
+                           HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html");
+
+        PrintWriter out = response.getWriter();
+
+        String idText = request.getParameter("id");
+        String name = request.getParameter("name");
+        String ageText = request.getParameter("age");
+        String department = request.getParameter("department");
+
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<title>Registration Result</title>");
+        out.println("</head>");
+        out.println("<body>");
+
+        try {
+
+            int id = Integer.parseInt(idText);
+            int age = Integer.parseInt(ageText);
+
+            String sql =
+                    "INSERT INTO employees " +
+                    "(id, name, age, department) " +
+                    "VALUES (?, ?, ?, ?)";
+
+            // MySQL Connector/J 5.1.10
+            Class.forName("com.mysql.jdbc.Driver");
+
+            Connection con = DriverManager.getConnection(
+                    URL,
+                    USER,
+                    PASSWORD
+            );
+
+            PreparedStatement ps =
+                    con.prepareStatement(sql);
+
+            ps.setInt(1, id);
+            ps.setString(2, name);
+            ps.setInt(3, age);
+            ps.setString(4, department);
+
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+
+                out.println("<h2>Registration Successful!</h2>");
+
+                out.println("<p><b>Employee ID:</b> "
+                        + id + "</p>");
+
+                out.println("<p><b>Name:</b> "
+                        + name + "</p>");
+
+                out.println("<p><b>Age:</b> "
+                        + age + "</p>");
+
+                out.println("<p><b>Department:</b> "
+                        + department + "</p>");
+
+            } else {
+
+                out.println("<h2>Registration Failed!</h2>");
+            }
+
+            ps.close();
+            con.close();
+
+        } catch (Exception e) {
+
+            out.println("<h2>Database Error</h2>");
+
+            out.println("<p><b>Error:</b> "
+                    + e.getMessage()
+                    + "</p>");
+
+        }
+
+        out.println("<br>");
+
+        out.println("<a href='register.html'>");
+        out.println("Register Another Employee");
+        out.println("</a>");
+
+        out.println("<br><br>");
+
+        out.println("<a href='displayEmployees'>");
+        out.println("Display All Employees");
+        out.println("</a>");
+
+        out.println("</body>");
+        out.println("</html>");
+    }
+}
+
+//DisplayEmployeesServlet
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+@WebServlet("/displayEmployees")
+public class DisplayEmployeesServlet extends HttpServlet {
+
+    private static final String URL =
+            "jdbc:mysql://localhost:3307/test_db";
+
+    private static final String USER =
+            "root";
+
+    private static final String PASSWORD =
+            "cs";
+
+    @Override
+    protected void doGet(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html");
+
+        PrintWriter out = response.getWriter();
+
+        out.println("<html>");
+        out.println("<head>");
+
+        out.println("<title>Employee Records</title>");
+
+        out.println("<style>");
+
+        out.println("body {");
+        out.println("font-family: Arial;");
+        out.println("margin: 30px;");
+        out.println("}");
+
+        out.println("h1 {");
+        out.println("text-align: center;");
+        out.println("}");
+
+        out.println("table {");
+        out.println("border-collapse: collapse;");
+        out.println("width: 80%;");
+        out.println("margin: auto;");
+        out.println("}");
+
+        out.println("th, td {");
+        out.println("border: 1px solid black;");
+        out.println("padding: 10px;");
+        out.println("text-align: center;");
+        out.println("}");
+
+        out.println("th {");
+        out.println("background-color: lightgray;");
+        out.println("}");
+
+        out.println("</style>");
+
+        out.println("</head>");
+
+        out.println("<body>");
+
+        out.println("<h1>All Employee Records</h1>");
+
+        String sql =
+                "SELECT id, name, age, department " +
+                "FROM employees";
+
+        try {
+
+            // MySQL Connector/J 5.1.10
+            Class.forName("com.mysql.jdbc.Driver");
+
+            Connection con = DriverManager.getConnection(
+                    URL,
+                    USER,
+                    PASSWORD
+            );
+
+            PreparedStatement ps =
+                    con.prepareStatement(sql);
+
+            ResultSet rs =
+                    ps.executeQuery();
+
+            out.println("<table>");
+
+            out.println("<tr>");
+
+            out.println("<th>ID</th>");
+            out.println("<th>Name</th>");
+            out.println("<th>Age</th>");
+            out.println("<th>Department</th>");
+
+            out.println("</tr>");
+
+            boolean found = false;
+
+            while (rs.next()) {
+
+                found = true;
+
+                out.println("<tr>");
+
+                out.println("<td>");
+                out.println(rs.getInt("id"));
+                out.println("</td>");
+
+                out.println("<td>");
+                out.println(rs.getString("name"));
+                out.println("</td>");
+
+                out.println("<td>");
+                out.println(rs.getInt("age"));
+                out.println("</td>");
+
+                out.println("<td>");
+                out.println(rs.getString("department"));
+                out.println("</td>");
+
+                out.println("</tr>");
+            }
+
+            out.println("</table>");
+
+            if (!found) {
+
+                out.println("<p style='text-align:center;'>");
+                out.println("No employee records found.");
+                out.println("</p>");
+            }
+
+            rs.close();
+            ps.close();
+            con.close();
+
+        } catch (Exception e) {
+
+            out.println("<h2>Database Error</h2>");
+
+            out.println("<p>");
+            out.println(e.getMessage());
+            out.println("</p>");
+        }
+
+        out.println("<br><br>");
+
+        out.println("<center>");
+
+        out.println("<a href='register.html'>");
+        out.println("Register New Employee");
+        out.println("</a>");
+
+        out.println("</center>");
+
+        out.println("</body>");
+        out.println("</html>");
+    }
+}
