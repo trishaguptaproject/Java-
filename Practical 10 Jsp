@@ -1,0 +1,321 @@
+//a.Write a JSP code that accepts username and password from HTML file and validates the user from the database
+//b. Write a registration JSP that accept the data for a given table and stores it in the database.
+//c. Write a JSP that displays all the records of a table
+
+//indext.html code
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Login</title>
+</head>
+
+<body>
+
+    <h2>User Login</h2>
+
+    <form action="login.jsp" method="post">
+
+        <label>Username:</label>
+        <input type="text" name="username" required>
+
+        <br><br>
+
+        <label>Password:</label>
+        <input type="password" name="password" required>
+
+        <br><br>
+
+        <input type="submit" value="Login">
+
+    </form>
+
+    <br>
+
+    <a href="register.jsp">New User? Register Here</a>
+
+</body>
+</html>
+
+//login.jsp
+<%@ page import="java.sql.*" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Validation</title>
+</head>
+
+<body>
+
+<h2>Login Validation</h2>
+
+<%
+    String username = request.getParameter("username");
+    String password = request.getParameter("password");
+
+    String url = "jdbc:mysql://localhost:3307/test_db";
+    String dbUser = "root";
+    String dbPassword = "cs";
+
+    try {
+
+        // For MySQL Connector/J 5.1.x
+        Class.forName("com.mysql.jdbc.Driver");
+
+        Connection con = DriverManager.getConnection(
+                url,
+                dbUser,
+                dbPassword
+        );
+
+        String sql = "SELECT * FROM users WHERE username=? AND password=?";
+
+        PreparedStatement ps = con.prepareStatement(sql);
+
+        ps.setString(1, username);
+        ps.setString(2, password);
+
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+%>
+
+            <h2>Login Successful!</h2>
+
+            <p>Welcome, <%= username %></p>
+
+            <br>
+
+            <a href="display.jsp">View All Users</a>
+
+            <br><br>
+
+            <a href="register.jsp">Register New User</a>
+
+<%
+        } else {
+%>
+
+            <h2>Invalid Username or Password</h2>
+
+            <br>
+
+            <a href="index.html">Try Again</a>
+
+<%
+        }
+
+        rs.close();
+        ps.close();
+        con.close();
+
+    } catch (Exception e) {
+
+        out.println("<h3>Database Error:</h3>");
+        out.println("<p>" + e.getMessage() + "</p>");
+
+    }
+%>
+
+</body>
+</html>
+
+//register.jsp
+<%@ page import="java.sql.*" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Registration</title>
+</head>
+
+<body>
+
+<h2>User Registration</h2>
+
+<form method="post">
+
+    <label>Username:</label>
+    <input type="text" name="username" required>
+
+    <br><br>
+
+    <label>Password:</label>
+    <input type="password" name="password" required>
+
+    <br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" required>
+
+    <br><br>
+
+    <label>Age:</label>
+    <input type="number" name="age" required>
+
+    <br><br>
+
+    <input type="submit" name="register" value="Register">
+
+</form>
+
+<br>
+
+<a href="index.html">Back to Login</a>
+
+<%
+    if (request.getParameter("register") != null) {
+
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String email = request.getParameter("email");
+        String age = request.getParameter("age");
+
+        String url = "jdbc:mysql://localhost:3307/test_db";
+        String dbUser = "root";
+        String dbPassword = "cs";
+
+        try {
+
+            // MySQL Connector/J 5.1.x
+            Class.forName("com.mysql.jdbc.Driver");
+
+            Connection con = DriverManager.getConnection(
+                    url,
+                    dbUser,
+                    dbPassword
+            );
+
+            String sql =
+                "INSERT INTO users(username,password,email,age) VALUES(?,?,?,?)";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.setString(3, email);
+            ps.setInt(4, Integer.parseInt(age));
+
+            int result = ps.executeUpdate();
+
+            if (result > 0) {
+%>
+
+                <h3>Registration Successful!</h3>
+
+                <p>User has been stored in the database.</p>
+
+                <a href="index.html">Go to Login</a>
+
+<%
+            }
+
+            ps.close();
+            con.close();
+
+        } catch (Exception e) {
+
+            out.println("<h3>Database Error:</h3>");
+            out.println("<p>" + e.getMessage() + "</p>");
+
+        }
+    }
+%>
+
+</body>
+</html>
+
+//display.jsp
+<%@ page import="java.sql.*" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All User Records</title>
+</head>
+
+<body>
+
+<h2>All User Records</h2>
+
+<table border="1" cellpadding="10">
+
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Email</th>
+        <th>Age</th>
+    </tr>
+
+<%
+
+    String url = "jdbc:mysql://localhost:3307/test_db";
+    String dbUser = "root";
+    String dbPassword = "cs";
+
+    try {
+
+        // MySQL Connector/J 5.1.x
+        Class.forName("com.mysql.jdbc.Driver");
+
+        Connection con = DriverManager.getConnection(
+                url,
+                dbUser,
+                dbPassword
+        );
+
+        Statement stmt = con.createStatement();
+
+        String sql = "SELECT * FROM users";
+
+        ResultSet rs = stmt.executeQuery(sql);
+
+        while (rs.next()) {
+%>
+
+    <tr>
+
+        <td><%= rs.getInt("id") %></td>
+
+        <td><%= rs.getString("username") %></td>
+
+        <td><%= rs.getString("password") %></td>
+
+        <td><%= rs.getString("email") %></td>
+
+        <td><%= rs.getInt("age") %></td>
+
+    </tr>
+
+<%
+        }
+
+        rs.close();
+        stmt.close();
+        con.close();
+
+    } catch (Exception e) {
+
+        out.println("<tr>");
+        out.println("<td colspan='5'>");
+        out.println("Database Error: " + e.getMessage());
+        out.println("</td>");
+        out.println("</tr>");
+
+    }
+
+%>
+
+</table>
+
+<br><br>
+
+<a href="register.jsp">Register New User</a>
+
+<br><br>
+
+<a href="index.html">Back to Login</a>
+
+</body>
+</html>
