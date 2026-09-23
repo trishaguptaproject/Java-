@@ -1,0 +1,333 @@
+//index.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cookie Practical</title>
+</head>
+
+<body>
+
+<h1>JSP Cookie and Session Practical</h1>
+
+<hr>
+
+<h2>Student Details</h2>
+
+<p><b>Name:</b> Trisha</p>
+<p><b>Roll No:</b> S086</p>
+<p><b>Subject:</b> Java</p>
+
+<hr>
+
+<h2>A. Store User Name in Cookie</h2>
+
+<form action="setCookie.jsp" method="post">
+
+    <label>Enter User Name:</label>
+    <input type="text" name="username" required>
+
+    <input type="submit" value="Store Cookie">
+
+</form>
+
+<br>
+
+<h2>C. Store User Name in Session</h2>
+
+<form action="setSession.jsp" method="post">
+
+    <label>Enter User Name:</label>
+    <input type="text" name="username" required>
+
+    <input type="submit" value="Store Session">
+
+</form>
+
+<br>
+
+<a href="showCookies.jsp">View All Cookies</a>
+
+</body>
+</html>
+```
+
+//setcookie.jsp
+<%@ page import="java.net.URLEncoder" %>
+
+<%
+    String username = request.getParameter("username");
+
+    if (username != null && !username.trim().equals("")) {
+
+        Cookie cookie = new Cookie(
+            "username",
+            URLEncoder.encode(username, "UTF-8")
+        );
+
+        cookie.setMaxAge(60 * 60 * 24 * 7);
+
+        response.addCookie(cookie);
+    }
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cookie Stored</title>
+</head>
+
+<body>
+
+<h1>Cookie Stored Successfully</h1>
+
+<p><b>Name:</b> Trisha</p>
+<p><b>Roll No:</b> S086</p>
+<p><b>Subject:</b> Java</p>
+
+<hr>
+
+<p>Username <b><%= username %></b> has been stored in a cookie.</p>
+
+<br>
+
+<a href="getCookie.jsp">Retrieve Cookie</a>
+<br><br>
+
+<a href="showCookies.jsp">View All Cookies</a>
+<br><br>
+
+<a href="index.html">Back</a>
+
+</body>
+</html>
+```
+//getCookie.jsp
+```jsp
+<%@ page import="java.net.URLDecoder" %>
+
+<%
+    String username = null;
+
+    Cookie[] cookies = request.getCookies();
+
+    if (cookies != null) {
+
+        for (Cookie cookie : cookies) {
+
+            if ("username".equals(cookie.getName())) {
+
+                username = URLDecoder.decode(
+                    cookie.getValue(),
+                    "UTF-8"
+                );
+
+                break;
+            }
+        }
+    }
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Retrieve Cookie</title>
+</head>
+
+<body>
+
+<h1>Cookie Value</h1>
+
+<p><b>Name:</b> Trisha</p>
+<p><b>Roll No:</b> S086</p>
+<p><b>Subject:</b> Java</p>
+
+<hr>
+
+<%
+    if (username != null) {
+%>
+
+    <h2>Welcome, <%= username %></h2>
+
+    <p>Username retrieved from cookie successfully.</p>
+
+<%
+    } else {
+%>
+
+    <p>No username cookie found.</p>
+
+<%
+    }
+%>
+
+<br>
+
+<a href="showCookies.jsp">View All Cookies</a>
+<br><br>
+
+<a href="index.html">Back</a>
+
+</body>
+</html>
+```
+
+//showCookie.jsp
+```jsp
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Cookies</title>
+</head>
+
+<body>
+
+<h1>Client-Side Cookies</h1>
+
+<p><b>Name:</b> Trisha</p>
+<p><b>Roll No:</b> S086</p>
+<p><b>Subject:</b> Java</p>
+
+<hr>
+
+<h2>Cookies Stored in Browser</h2>
+
+<%
+    Cookie[] cookies = request.getCookies();
+
+    if (cookies != null && cookies.length > 0) {
+%>
+
+<table border="1" cellpadding="10">
+
+    <tr>
+        <th>Cookie Name</th>
+        <th>Cookie Value</th>
+    </tr>
+
+<%
+        for (Cookie cookie : cookies) {
+%>
+
+    <tr>
+        <td><%= cookie.getName() %></td>
+        <td><%= cookie.getValue() %></td>
+    </tr>
+
+<%
+        }
+%>
+
+</table>
+
+<%
+    } else {
+%>
+
+    <p>No cookies found.</p>
+
+<%
+    }
+%>
+
+<br>
+
+<a href="index.html">Back</a>
+
+</body>
+</html>
+```
+
+//setSession.jsp
+<%
+String username = request.getParameter("username");
+
+```
+if (username != null && !username.trim().equals("")) {
+    session.setAttribute("username", username);
+}
+```
+
+%>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Session Stored</title>
+</head>
+
+<body>
+
+<h1>Session Variable Stored Successfully</h1>
+
+<p><b>Name:</b> Trisha</p>
+<p><b>Roll No:</b> S086</p>
+<p><b>Subject:</b> Java</p>
+
+<hr>
+
+<p>Username <b><%= username %></b> has been stored in the session.</p>
+
+<br>
+
+<a href="getSession.jsp">Retrieve Session Value</a>
+
+<br><br>
+
+<a href="index.html">Back</a>
+
+</body>
+</html>
+
+//getsession.jsp
+<%
+String username = (String) session.getAttribute("username");
+%>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Retrieve Session</title>
+</head>
+
+<body>
+
+<h1>Session Value</h1>
+
+<p><b>Name:</b> Trisha</p>
+<p><b>Roll No:</b> S086</p>
+<p><b>Subject:</b> Java</p>
+
+<hr>
+
+<%
+if (username != null) {
+%>
+
+```
+<h2>Welcome, <%= username %></h2>
+
+<p>Username retrieved from session successfully.</p>
+```
+
+<%
+} else {
+%>
+
+```
+<p>No session variable found.</p>
+```
+
+<%
+}
+%>
+
+<br>
+
+<a href="index.html">Back</a>
+
+</body>
+</html>
+
